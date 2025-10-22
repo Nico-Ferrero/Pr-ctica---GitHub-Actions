@@ -7,7 +7,7 @@ jobs:
     Linter_Job:
         runs-on: ubuntu-latest
         steps:
-        - name : Run .eslintrc.json Linter
-          run: npx eslint . --config .eslintrc.json
+        - name : Instalar dependencias y ejecutar linter
+          run: npm install eslint && npm run lint
     
     
