@@ -20,7 +20,23 @@ jobs:
       - name: Ejecutar .eslintrc.json
         run: npx eslint "**/*.{js,jsx,ts,tsx}" --config .eslintrc.json
 
+  IniciarServer_Job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Iniciar servidor de pruebas Cypress
+        run: npm run build && npm start
+
   Cypress_Job:
+    needs: IniciarServer_Job
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -31,9 +47,6 @@ jobs:
 
       - name: Instalar dependencias
         run: npm ci
-
-      - name: Iniciar servidor de pruebas Cypress
-        run: npm run build && npm start
 
       - name: Ejecutar pruebas Cypress
         run: npx cypress run
