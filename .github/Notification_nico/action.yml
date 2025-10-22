@@ -42,17 +42,23 @@ runs:
       with:
         server_address: ${{ inputs.smtp-server }}
         server_port: ${{ inputs.smtp-port }}
+        secure: true
         username: ${{ inputs.smtp-username }}
         password: ${{ inputs.smtp-password }}
         subject: ${{ steps.prepare.outputs.subject }}
         to: ${{ inputs.email-to }}
         from: GitHub Actions <${{ inputs.smtp-username }}>
+        content_type: text/html
+        convert_markdown: true
         body: |
-          ${{ steps.prepare.outputs.body }}
+          <h2>${{ steps.prepare.outputs.body }}</h2>
           
-          Repositorio: ${{ github.repository }}
-          Commit: ${{ github.sha }}
-          Autor: ${{ github.actor }}
-          Branch: ${{ github.ref }}
+          <h3>Detalles del Pipeline:</h3>
+          <ul>
+            <li><strong>Repositorio:</strong> ${{ github.repository }}</li>
+            <li><strong>Commit:</strong> ${{ github.sha }}</li>
+            <li><strong>Autor:</strong> ${{ github.actor }}</li>
+            <li><strong>Branch:</strong> ${{ github.ref }}</li>
+          </ul>
           
-          Ver detalles: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          <p><a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">Ver detalles en GitHub Actions</a></p>
