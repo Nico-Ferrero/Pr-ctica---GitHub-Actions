@@ -1,0 +1,13 @@
+name: Main Workflow
+on:
+  push:
+    branches:
+      - master
+jobs:
+    Linter_Job:
+        runs-on: ubuntu-latest
+        steps:
+        - name : Run .eslintrc.json Linter
+          run: npx eslint . --config .eslintrc.json
+    
+    
