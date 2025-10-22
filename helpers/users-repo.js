@@ -19,6 +19,7 @@ function getById(id) {
   return users.find((x) => x.id.toString() === id.toString());
 }
 
+
 function create({ name, lastName, email }) {
   const user = { name, lastName, email };
   console.log(user);
