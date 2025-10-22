@@ -33,7 +33,7 @@ jobs:
         run: npm ci
 
       - name: Iniciar servidor de pruebas Cypress
-        run: npm run build && npm start
+        run: npm run build && npm start & sleep 10
 
   Cypress_Job:
     needs: IniciarServer_Job
