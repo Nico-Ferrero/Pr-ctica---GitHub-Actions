@@ -16,4 +16,17 @@ jobs:
       - name: Ejecutar .eslintrc.json
         run: npx eslint "**/*.{js,jsx,ts,tsx}" --config .eslintrc.json
     
-    
+   Cypress_Job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Ejecutar pruebas Cypress
+        run: npx cypress run
+
+      - name: Guardar resultados de pruebas en el result.txt
+        run: npx cypress run > result.txt
