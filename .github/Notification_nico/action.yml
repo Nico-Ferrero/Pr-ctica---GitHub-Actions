@@ -42,15 +42,13 @@ runs:
       with:
         server_address: ${{ inputs.smtp-server }}
         server_port: ${{ inputs.smtp-port }}
-        secure: true
+        secure: false
         username: ${{ inputs.smtp-username }}
         password: ${{ inputs.smtp-password }}
         subject: ${{ steps.prepare.outputs.subject }}
         to: ${{ inputs.email-to }}
         from: GitHub Actions <${{ inputs.smtp-username }}>
-        content_type: text/html
-        convert_markdown: true
-        body: |
+        html_body: |
           <h2>${{ steps.prepare.outputs.body }}</h2>
           
           <h3>Detalles del Pipeline:</h3>
