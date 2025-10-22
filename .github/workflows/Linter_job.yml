@@ -48,8 +48,6 @@ jobs:
           name: cypress-results
           path: result.txt
 
-        
-
   Add_Badge_Job:
     needs: Cypress_Job
     runs-on: ubuntu-latest
@@ -126,8 +124,53 @@ jobs:
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
           working-directory: ./
 
-    
-    
-    
+  Notification_job:
+    needs: [Add_Badge_Job, Cypress_Job, Linter_Job]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-
+      - name: Comprobar_errores_jobs
+        id: check
+        run: |
+          echo "Checking job results..."
+          FAILED=false
+          
+          if [ "${{ needs.Linter_Job.result }}" != "success" ]; then
+            echo "❌ Linter Job failed or was cancelled."
+            FAILED=true
+          else
+            echo "✅ Linter Job succeeded."
+          fi
+          
+          if [ "${{ needs.Cypress_Job.result }}" != "success" ]; then
+            echo "❌ Cypress Job failed or was cancelled."
+            FAILED=true
+          else
+            echo "✅ Cypress Job succeeded."
+          fi
+          
+          if [ "${{ needs.Add_Badge_Job.result }}" != "success" ]; then
+            echo "❌ Add Badge Job failed or was cancelled."
+            FAILED=true
+          else
+            echo "✅ Add Badge Job succeeded."
+          fi
+          
+          if [ "$FAILED" = "true" ]; then
+            echo "result=failure" >> $GITHUB_OUTPUT
+            echo "⚠️ Some jobs failed. Please check the logs."
+          else
+            echo "result=success" >> $GITHUB_OUTPUT
+            echo "🎉 All previous jobs succeeded!"
+          fi
+    
+      - name: Enviar notificación por email
+        uses: ./.github/Notification_nico
+        with:
+          test-result: ${{ steps.check.outputs.result }}
+          email-to: ${{ secrets.NOTIFICATION_EMAIL }}
+          smtp-username: ${{ secrets.SMTP_USERNAME }}
+          smtp-password: ${{ secrets.SMTP_PASSWORD }}

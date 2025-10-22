@@ -1,0 +1,58 @@
+name: Script_Notification
+description: 'Envía una notificación por email basada en los resultados de trabajos anteriores'
+inputs:
+  test-result:
+    description: 'Resultado de las pruebas: success o failure'
+    required: true
+  email-to:
+    description: 'Dirección de email del destinatario'
+    required: true
+  smtp-server:
+    description: 'Servidor SMTP'
+    required: false
+    default: 'smtp.gmail.com'
+  smtp-port:
+    description: 'Puerto SMTP'
+    required: false
+    default: '587'
+  smtp-username:
+    description: 'Usuario SMTP'
+    required: true
+  smtp-password:
+    description: 'Contraseña SMTP'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Preparar mensaje de email
+      id: prepare
+      shell: bash
+      run: |
+        if [ "${{ inputs.test-result }}" = "success" ]; then
+          echo "subject=✅ Pipeline Exitoso - GitHub Actions" >> $GITHUB_OUTPUT
+          echo "body=El pipeline se ejecutó correctamente. Todos los tests pasaron." >> $GITHUB_OUTPUT
+        else
+          echo "subject=❌ Pipeline Fallido - GitHub Actions" >> $GITHUB_OUTPUT
+          echo "body=El pipeline falló. Por favor revisa los logs en GitHub Actions." >> $GITHUB_OUTPUT
+        fi
+    
+    - name: Enviar notificación por email
+      uses: dawidd6/action-send-mail@v3
+      with:
+        server_address: ${{ inputs.smtp-server }}
+        server_port: ${{ inputs.smtp-port }}
+        username: ${{ inputs.smtp-username }}
+        password: ${{ inputs.smtp-password }}
+        subject: ${{ steps.prepare.outputs.subject }}
+        to: ${{ inputs.email-to }}
+        from: GitHub Actions <${{ inputs.smtp-username }}>
+        body: |
+          ${{ steps.prepare.outputs.body }}
+          
+          Repositorio: ${{ github.repository }}
+          Commit: ${{ github.sha }}
+          Autor: ${{ github.actor }}
+          Branch: ${{ github.ref }}
+          
+          Ver detalles: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
