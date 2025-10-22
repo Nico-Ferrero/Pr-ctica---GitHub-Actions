@@ -4,10 +4,16 @@ on:
     branches:
       - main
 jobs:
-    Linter_Job:
-        runs-on: ubuntu-latest
-        steps:
-        - name : Instalar dependencias y ejecutar linter
-          run: npm install eslint && npm run lint
+  Linter_Job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Ejecutar .eslintrc.json
+        run: npx eslint "**/*.{js,jsx,ts,tsx}" --config .eslintrc.json
     
     
