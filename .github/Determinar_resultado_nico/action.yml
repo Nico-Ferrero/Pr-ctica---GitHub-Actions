@@ -1,0 +1,39 @@
+name: Determinar_resultado_nico
+description: 'Lee el archivo de resultados y determina si las pruebas fueron exitosas'
+inputs:
+  result-file:
+    description: 'Path to the result file'
+    required: true
+outputs:
+  test-passed:
+    description: 'true if tests passed, false otherwise'
+    value: ${{ steps.check.outputs.passed }}
+runs:
+  using: "composite"
+  steps:
+    - name: Check test results
+      id: check
+      shell: bash
+      run: |
+        RESULT_FILE="${{ inputs.result-file }}"
+        echo "Leyendo archivo de resultados: $RESULT_FILE"
+        
+        if [ ! -f "$RESULT_FILE" ]; then
+          echo "❌ Archivo no encontrado: $RESULT_FILE"
+          echo "passed=false" >> $GITHUB_OUTPUT
+          exit 1
+        fi
+        
+        # Buscar indicadores de fallo en el resultado de Cypress
+        if grep -q "failing" "$RESULT_FILE"; then
+          echo "❌ Tests fallidos detectados"
+          echo "passed=false" >> $GITHUB_OUTPUT
+          exit 1
+        elif grep -q "passing" "$RESULT_FILE"; then
+          echo "✅ Todos los tests pasaron"
+          echo "passed=true" >> $GITHUB_OUTPUT
+        else
+          echo "⚠️ No se pudo determinar el resultado"
+          echo "passed=false" >> $GITHUB_OUTPUT
+          exit 1
+        fi

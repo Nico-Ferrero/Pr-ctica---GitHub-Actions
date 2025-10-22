@@ -37,3 +37,67 @@ jobs:
 
       - name: Guardar resultados de pruebas en el result.txt
         run: npx cypress run > result.txt
+
+      - name: Subir resultados de pruebas a la carpeta de resultados
+        uses: actions/upload-artifact@v3
+        with:
+          name: cypress-results
+          path: result.txt
+
+        
+
+  Add_Badge_Job:
+    needs: Cypress_Job
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Descargar resultados de pruebas
+        uses: actions/download-artifact@v3
+        with:
+          name: cypress-results
+          path: ./results
+
+      - name: Generar_output
+        run: cat ./results/result.txt > output.txt
+
+      - name: Determinar_resultado
+        id: determine
+        uses: ./.github/Determinar_resultado_nico
+        with:
+          result-file: output.txt
+      
+      - name: Añadir_badge_readme
+        if: ${{ steps.determine.outputs.test-passed == 'true' }}
+        run: |
+          echo "![Test Status](https://img.shields.io/badge/test-success-green)" > README.md
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Añadir_badge_readme_failure
+        if: ${{ steps.determine.outputs.test-passed == 'false' }}
+        run: |
+          echo "![Test Status](https://img.shields.io/badge/test-failure-red)" > README.md
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Commit changes
+        run: |
+          git add README.md
+          git commit -m "Actualizar badge de estado de tests"
+          git push origin main
+      
+
+
+    
+    
+    
+
+
