@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+
 jobs:
   Linter_Job:
     runs-on: ubuntu-latest
@@ -10,17 +11,27 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
       - name: Instalar dependencias
         run: npm ci
 
       - name: Ejecutar .eslintrc.json
         run: npx eslint "**/*.{js,jsx,ts,tsx}" --config .eslintrc.json
-    
-   Cypress_Job:
+
+  Cypress_Job:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
 
       - name: Instalar dependencias
         run: npm ci
