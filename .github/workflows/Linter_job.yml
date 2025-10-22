@@ -24,6 +24,7 @@ jobs:
         run: npx eslint "**/*.{js,jsx,ts,tsx}" --config .eslintrc.json
 
   Cypress_Job:
+    needs: Linter_Job
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -97,7 +98,27 @@ jobs:
           git commit -m "Actualizar badge de estado de tests"
           git push origin main
       
+  Deploy_job:
+    needs: Cypress_Job
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - uses: amondnet/vercel-action@v25 # deploy
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
+          github-token: ${{ secrets.GITHUB_TOKEN }} # Optional
+          vercel-args: --prod # Optional
+          vercel-org-id: ${{ secrets.ORG_ID}} # Required
+          vercel-project-id: ${{ secrets.PROJECT_ID}} # Required
+          working-directory: ./sub-directory
 
     
     
