@@ -77,6 +77,9 @@ jobs:
         uses: ./.github/Determinar_resultado_nico
         with:
           result-file: output.txt
+
+      - name: Borramos el contenido del README.md
+        run: echo "" > README.md
       
       - name: Añadir_badge_readme
         if: ${{ steps.determine.outputs.test-passed == 'true' }}
@@ -94,7 +97,7 @@ jobs:
 
       - name: Commit changes
         run: |
-          git add README.md
+          git add .
           git commit -m "Actualizar badge de estado de tests"
           git push origin main
       
