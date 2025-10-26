@@ -54,7 +54,7 @@ Comandos independientes que se combinan formando steps
 -  Descargar resultados de pruebas: con la misma action que hemos usado para subir el anterior archivo ahora nos lo descargamos
 - Generar_output: creamos el output.txt con el resultado del archivo creado en la step anterior
 - Determinar_resultado: Con nuestro script siguiente vamos a validar el resultado
-![Action3_Determinar_resultado ](./shared/img/Add_Badge_Job.png)
+![Action3_Determinar_resultado ](./shared/img/Determinar_resultado_nico.png)
 - Borramos el contenido del README.md: Esta linea era para los test
 - Añadir_badge_readme: Si el resultado es true añadimos la badge
 - Añadir_badge_readme_failure: Si el resultado es false añadimos la otra badge
