@@ -74,6 +74,7 @@ Comandos independientes que se combinan formando steps
 - Enviar notificación por email: Lanzamos nuestro scrtipt personalizados con los secrets como parametros
 ![Action5_Script_Notification](./shared/img/Script_Notification.png)
 - Enviamos el correo con el contenido correspondiente
+![Action5_Script_Notification](./shared/img/resultado%20email.png)
 
 ### README
 ![Action5](./shared/img/perfil.png)
