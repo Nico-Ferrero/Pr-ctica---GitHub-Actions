@@ -75,21 +75,22 @@ jobs:
         uses: ./.github/Determinar_resultado_nico
         with:
           result-file: output.txt
-
-      - name: Borramos el contenido del README.md
-        run: echo "" > README.md
+      
+      - name: Remover_badge_antigua
+        run: |
+          sed -i '/!\[Test Status\]/d' README.md
       
       - name: Añadir_badge_readme
         if: ${{ steps.determine.outputs.test-passed == 'true' }}
         run: |
-          echo "![Test Status](https://img.shields.io/badge/test-success-green)" > README.md
+          sed -i '1i ![Test Status](https://img.shields.io/badge/test-success-green)' README.md
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Añadir_badge_readme_failure
         if: ${{ steps.determine.outputs.test-passed == 'false' }}
         run: |
-          echo "![Test Status](https://img.shields.io/badge/test-failure-red)" > README.md
+          sed -i '1i ![Test Status](https://img.shields.io/badge/test-failure-red)' README.md
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
